@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مدرسة نيو فيجن الخاصة</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; }
+  
+  :root {
+    --primary: #1a4d8f;
+    --primary-light: #2c6cb0;
+    --primary-dark: #0f3460;
+    --gold: #c9a227;
+    --gold-light: #e6be4a;
+    --bg: #eef2f7;
+    --card: #ffffff;
+    --text: #2c3e50;
+    --text-light: #7f8c9a;
+    --border: #d8e0ea;
+    --success: #28a745;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --info: #17a2b8;
+    --purple: #6f42c1;
+  }
+
+  body {
+    background: linear-gradient(135deg, #eef2f7 0%, #dde5f0 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+  }
+  
+  .container { max-width: 1500px; margin: 0 auto; }
+
+  /* =============== الرأس الرئيسي =============== */
+  .main-header {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+    border-radius: 18px;
+    padding: 30px 40px;
+    margin-bottom: 25px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(26, 77, 143, 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .main-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(201, 162, 39, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .main-header::after {
+    content: '';
+    position: absolute;
+    bottom: -60%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .school-name-wrapper {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 0 30px;
+  }
+  .school-name {
+    font-family: 'Cairo', sans-serif;
+    font-size: 42px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+    text-shadow: 0 3px 15px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(135deg, #ffffff 0%, #e6be4a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .school-subtitle {
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: 8px;
+    letter-spacing: 2px;
+  }
+  .school-divider {
+    width: 120px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    margin: 12px auto 0;
+    border-radius: 3px;
+  }
+
+  /* =============== الشريط العلوي =============== */
+  .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    padding: 12px 18px;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* =============== التبويبات =============== */
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    background: var(--card);
+    padding: 10px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  }
+  .tab-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 14px 20px;
+    background: transparent;
+    border: 2px solid transparent;
+    color: var(--primary);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    transition: all 0.3s ease;
+  }
+  .tab-btn:hover { background: #f0f6ff; transform: translateY(-2px); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(26, 77, 143, 0.3);
+  }
+  
+  /* =============== الأقسام =============== */
+  .section {
+    display: none;
+    background: var(--card);
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+  }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* =============== رأس الكشف =============== */
+  .report-header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 20px 25px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #f8faff 0%, #eef3fb 100%);
+    border: 1px solid var(--border);
+    border-right: 5px solid var(--primary);
+    position: relative;
+  }
+  .report-logo {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    padding: 5px;
+  }
+  .report-logo-empty {
+    width: 110px;
+    height: 110px;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-size: 12px;
+    text-align: center;
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+  .report-title-block { flex: 1; text-align: center; }
+  .report-school-name {
+    font-family: 'Cairo', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+  .report-school-name::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 2px;
+    background: var(--gold);
+    margin: 6px auto 0;
+    border-radius: 2px;
+  }
+  .report-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 8px auto 5px;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    background: #fff;
+    font-family: 'Cairo', sans-serif;
+  }
+  .report-title:focus { outline: none; border-color: var(--primary); }
+  .report-date-line {
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .report-date-line input[type="date"] {
+    display: inline-block;
+    width: 170px;
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Cairo', sans-serif;
+  }
+  
+  /* =============== الأزرار =============== */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 14px rgba(0, 0, 0, 0.15); }
+  .btn:active { transform: translateY(0); }
+  .btn-add { background: linear-gradient(135deg, #2ecc71, #28a745); color: #fff; }
+  .btn-print { background: linear-gradient(135deg, #3498db, #007bff); color: #fff; }
+  .btn-save { background: linear-gradient(135deg, #f1c40f, #ffc107); color: #333; }
+  .btn-clear { background: linear-gradient(135deg, #e74c3c, #dc3545); color: #fff; }
+  .btn-template { background: linear-gradient(135deg, #9b59b6, #6f42c1); color: #fff; }
+  .btn-jobs { background: linear-gradient(135deg, #fd9644, #fd7e14); color: #fff; }
+  .btn-logo { background: linear-gradient(135deg, #26c6da, #17a2b8); color: #fff; }
+  .btn-download { background: linear-gradient(135deg, #27ae60, #1d6f42); color: #fff; }
+  .btn-del { 
+    background: linear-gradient(135deg, #e74c3c, #dc3545); 
+    color: #fff; 
+    padding: 5px 11px; 
+    font-size: 13px; 
+    border-radius: 8px;
+    box-shadow: none;
+  }
+  
+  /* =============== صندوق البحث =============== */
+  .search-box {
+    background: linear-gradient(135deg, #f0f6ff 0%, #e3edfb 100%);
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .search-box label {
+    font-weight: 700;
+    color: var(--primary);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .search-input-wrapper {
+    flex: 1;
+    position: relative;
+    min-width: 200px;
+  }
+  .search-input {
+    width: 100%;
+    padding: 10px 42px 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Cairo', sans-serif;
+    background: #fff;
+    color: var(--text);
+    transition: all 0.2s;
+    font-weight: 600;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26, 77, 143, 0.15);
+  }
+  .search-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+  .search-clear {
+    background: linear-gradient(135deg, #e74c3c, #dc3545);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 15px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .search-clear:hover { transform: translateY(-2px); box-shadow: 0 5px 14px rgba(0, 0, 0, 0.15); }
+  .search-stats {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 6px 12px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  
+  /* =============== الجداول =============== */
+  .table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+    background: #fff;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 8px 6px; text-align: center; }
+  th {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    padding: 10px 6px;
+    position: sticky;
+    top: 0;
+  }
+  tbody tr { transition: background 0.15s; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody tr:hover { background: #eaf2fd; }
+  tbody td { font-family: 'Cairo', sans-serif; }
+  
+  tbody tr.hidden-by-search { display: none !important; }
+  
+  .no-results {
+    display: none;
+    text-align: center;
+    padding: 30px;
+    color: var(--text-light);
+    font-weight: 700;
+    font-size: 15px;
+    background: #f8fafc;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+  .no-results.show { display: block; }
+
+  /* =============== الحقول =============== */
+  input, select, textarea {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Cairo', sans-serif;
+    background: #fff;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26, 77, 143, 0.1);
+  }
+  input[type="date"] { cursor: pointer; padding: 6px 8px; font-size: 12px; }
+  
+  /* =============== صندوق الرفع =============== */
+  .upload-box {
+    background: linear-gradient(135deg, #f0f6ff 0%, #e3edfb 100%);
+    border: 2px dashed var(--primary);
+    padding: 14px 18px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .upload-box label { font-weight: 700; color: var(--primary); font-family: 'Cairo', sans-serif; }
+  .upload-box input[type="file"] { width: auto; padding: 6px; background: #fff; cursor: pointer; border-radius: 8px; }
+
+  .hint {
+    background: linear-gradient(135deg, #fff9e6 0%, #fff4d1 100%);
+    border-right: 4px solid var(--warning);
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: #7d5e00;
+    font-weight: 600;
+  }
+  .hint b { color: var(--primary); }
+
+  /* =============== نافذة منبثقة =============== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 52, 96, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 18px;
+    padding: 25px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal h2 { color: var(--primary); margin-bottom: 8px; text-align: center; font-family: 'Cairo', sans-serif; font-weight: 800; }
+  .modal p { text-align: center; color: var(--text-light); margin-bottom: 18px; font-size: 13px; }
+  .job-item { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .job-item input { flex: 1; }
+  .modal-footer { margin-top: 18px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+
+  /* =============== عناصر تظهر في الطباعة فقط =============== */
+  .print-only {
+    display: none;
+  }
+
+  /* ============================================================
+     إعدادات الطباعة
+     ============================================================ */
+  @page {
+    size: A4 landscape;
+    margin: 5mm 4mm;
+  }
+
+  @media print {
+    html, body {
+      background: #fff !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+      height: auto !important;
+      font-size: 10px !important;
+      color: #000 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .main-header,
+    .top-bar,
+    .tabs,
+    .toolbar,
+    .btn,
+    .no-print,
+    .upload-box,
+    .hint,
+    .search-box,
+    .no-results,
+    .modal-overlay { 
+      display: none !important; 
+    }
+
+    .container {
+      max-width: 100% !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .section {
+      display: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      background: #fff !important;
+    }
+    .section.active { 
+      display: block !important; 
+      width: 100% !important;
+      page-break-inside: auto;
+    }
+
+    .report-header { display: none !important; }
+    .print-only { display: block !important; }
+
+    /* ============ رأس الطباعة ============ */
+    .print-header {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      border: 2px solid #1a4d8f !important;
+      border-radius: 8px !important;
+      padding: 8px 12px !important;
+      margin-bottom: 6px !important;
+      background: #f8faff !important;
+      page-break-inside: avoid !important;
+      page-break-after: avoid !important;
+      gap: 12px !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .print-header-logo {
+      width: 65px !important;
+      height: 65px !important;
+      object-fit: contain !important;
+      border: 1px solid #d8e0ea !important;
+      border-radius: 6px !important;
+      background: #fff !important;
+      padding: 2px !important;
+      flex-shrink: 0 !important;
+    }
+    .print-header-logo-empty {
+      width: 65px !important;
+      height: 65px !important;
+      border: 1px dashed #ccc !important;
+      border-radius: 6px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 8px !important;
+      color: #999 !important;
+      background: #fff !important;
+      flex-shrink: 0 !important;
+      text-align: center !important;
+    }
+    .print-header-center {
+      flex: 1 !important;
+      text-align: center !important;
+    }
+    .print-header-school {
+      font-family: 'Cairo', sans-serif !important;
+      font-size: 17px !important;
+      font-weight: 900 !important;
+      color: #1a4d8f !important;
+      margin-bottom: 2px !important;
+    }
+    .print-header-title {
+      font-family: 'Cairo', sans-serif !important;
+      font-size: 13px !important;
+      font-weight: 700 !important;
+      margin: 2px 0 !important;
+      padding: 2px 8px !important;
+      display: inline-block !important;
+      background: #1a4d8f !important;
+      color: #fff !important;
+      border-radius: 4px !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .print-header-date {
+      font-family: 'Cairo', sans-serif !important;
+      font-size: 10px !important;
+      color: #333 !important;
+      font-weight: 600 !important;
+      margin-top: 2px !important;
+    }
+    .print-header-divider {
+      width: 50px !important;
+      height: 2px !important;
+      background: #c9a227 !important;
+      margin: 3px auto !important;
+      border-radius: 2px !important;
+    }
+    .print-header-meta {
+      flex-shrink: 0 !important;
+      text-align: left !important;
+      font-size: 9px !important;
+      color: #555 !important;
+      font-weight: 600 !important;
+      min-width: 100px !important;
+    }
+    .print-header-meta div {
+      margin-bottom: 2px !important;
+    }
+
+    /* ============ الجدول ============ */
+    .table-wrapper {
+      overflow: visible !important;
+      border: none !important;
+      box-shadow: none !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      page-break-inside: auto !important;
+      display: block !important;
+    }
+
+    table {
+      width: 100% !important;
+      max-width: 100% !important;
+      border-collapse: collapse !important;
+      font-size: 8px !important;
+      table-layout: fixed !important;
+      page-break-inside: auto !important;
+    }
+
+    table th:first-child,
+    table td:first-child {
+      width: 22px !important;
+      min-width: 22px !important;
+      max-width: 22px !important;
+      padding: 2px 1px !important;
+      font-size: 8px !important;
+    }
+    table th:nth-child(2),
+    table td:nth-child(2) {
+      width: 90px !important;
+      min-width: 90px !important;
+      font-size: 8px !important;
+    }
+    table th:nth-child(3),
+    table td:nth-child(3) {
+      width: 70px !important;
+      min-width: 70px !important;
+      font-size: 8px !important;
+    }
+    table th:not(:first-child):not(:nth-child(2)):not(:nth-child(3)),
+    table td:not(:first-child):not(:nth-child(2)):not(:nth-child(3)) {
+      font-size: 7px !important;
+      padding: 1px 0 !important;
+    }
+
+    thead { display: table-header-group !important; }
+    thead tr { page-break-inside: avoid !important; }
+
+    tbody { page-break-inside: auto !important; }
+    tbody tr {
+      page-break-inside: avoid !important;
+      page-break-after: auto !important;
+    }
+    tbody tr.hidden-by-search { display: table-row !important; }
+
+    th, td {
+      border: 1px solid #333 !important;
+      padding: 2px 1px !important;
+      font-size: 8px !important;
+      color: #000 !important;
+      word-wrap: break-word !important;
+      overflow-wrap: break-word !important;
+      text-align: center !important;
+      vertical-align: middle !important;
+      line-height: 1.2 !important;
+    }
+    th {
+      background: #1a4d8f !important;
+      color: #fff !important;
+      font-weight: 700 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      font-size: 8px !important;
+      padding: 3px 1px !important;
+    }
+    tbody tr:nth-child(even) td {
+      background: #f2f6fc !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    input, select, textarea {
+      border: none !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      font-size: 8px !important;
+      color: #000 !important;
+      width: 100% !important;
+      font-family: 'Cairo', sans-serif !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      text-align: center !important;
+      line-height: 1.2 !important;
+    }
+    input[type="date"] {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      background: transparent !important;
+      font-size: 7px !important;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator { display: none !important; }
+    select {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      text-align: center !important;
+      background: transparent !important;
+      font-size: 8px !important;
+    }
+
+    /* ============ تذييل الطباعة ============ */
+    .print-footer {
+      display: block !important;
+      margin-top: 8px !important;
+      padding-top: 5px !important;
+      border-top: 1px solid #d8e0ea !important;
+      text-align: center !important;
+      font-size: 9px !important;
+      color: #333 !important;
+      font-family: 'Cairo', sans-serif !important;
+      font-weight: 700 !important;
+      page-break-inside: avoid !important;
+    }
+
+    /* كشف الاعتيادي: خط أصغر */
+    #normal.active table { font-size: 7px !important; }
+    #normal.active th,
+    #normal.active td { font-size: 7px !important; padding: 1px 0 !important; }
+    #normal.active input,
+    #normal.active select { font-size: 7px !important; }
+    #normal.active input[type="date"] { font-size: 6px !important; }
+    #normal.active table th:first-child,
+    #normal.active table td:first-child {
+      width: 18px !important;
+      min-width: 18px !important;
+      max-width: 18px !important;
+    }
+    #normal.active table th:nth-child(2),
+    #normal.active table td:nth-child(2) {
+      width: 75px !important;
+      min-width: 75px !important;
+    }
+    #normal.active table th:nth-child(3),
+    #normal.active table td:nth-child(3) {
+      width: 60px !important;
+      min-width: 60px !important;
+    }
+  }
+
+  /* =============== الجوال =============== */
+  @media (max-width: 768px) {
+    body { padding: 12px; }
+    .school-name { font-size: 28px; }
+    .report-header { flex-direction: column; gap: 12px; text-align: center; }
+    .tab-btn { font-size: 13px; padding: 11px 12px; min-width: 100px; }
+    .btn { font-size: 13px; padding: 9px 15px; }
+    .search-box { flex-direction: column; align-items: stretch; }
+    .search-input-wrapper { min-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  
+  <div class="main-header">
+    <div class="school-name-wrapper">
+      <div class="school-name">مدرسة نيو فيجن الخاصة</div>
+      <div class="school-divider"></div>
+      <div class="school-subtitle">NEW VISION PRIVATE SCHOOL</div>
+    </div>
+  </div>
+
+  <div class="top-bar no-print">
+    <button class="btn btn-logo" onclick="document.getElementById('logoInput').click()">🖼️ رفع شعار المدرسة</button>
+    <input type="file" id="logoInput" accept="image/*" style="display:none;" onchange="uploadLogo(event)">
+    <button class="btn btn-jobs" onclick="openJobsModal()">🏫 إدارة قائمة الوظائف</button>
+  </div>
+  
+  <div class="tabs no-print">
+    <button class="tab-btn active" onclick="showTab('attendance', this)">📋 كشف العوارض</button>
+    <button class="tab-btn" onclick="showTab('normal', this)">📅 كشف الاعتيادي</button>
+    <button class="tab-btn" onclick="showTab('waiting', this)">⏳ قائمة الانتظار</button>
+    <button class="tab-btn" onclick="showTab('absence', this)">🚫 غياب اليوم</button>
+  </div>
+
+  <!-- ============ كشف العوارض ============ -->
+  <div id="attendance" class="section active">
+    
+    <div class="report-header no-print">
+      <div id="att-logo-slot"></div>
+      <div class="report-title-block">
+        <div class="report-school-name">مدرسة نيو فيجن الخاصة</div>
+        <input type="text" id="att-title" class="report-title" value="كشف العوارض">
+        <div class="report-date-line">
+          📅 التاريخ: <input type="date" id="att-date">
+        </div>
+      </div>
+      <div style="width:110px;"></div>
+    </div>
+
+    <div class="print-only print-header">
+      <div id="att-print-logo"></div>
+      <div class="print-header-center">
+        <div class="print-header-school">مدرسة نيو فيجن الخاصة</div>
+        <div class="print-header-divider"></div>
+        <div class="print-header-title" id="att-print-title">كشف العوارض</div>
+        <div class="print-header-date" id="att-print-date"></div>
+      </div>
+      <div class="print-header-meta">
+        <div>📅 تاريخ الطباعة</div>
+        <div id="att-print-now"></div>
+      </div>
+    </div>
+
+    <div class="upload-box no-print">
+      <label>📂 رفع ملف Excel:</label>
+      <input type="file" accept=".xlsx,.xls,.csv" onchange="importExcel(event, 'attendance')">
+      <button class="btn btn-template" onclick="downloadTemplate('attendance')">⬇️ تحميل قالب</button>
+    </div>
+    <div class="hint no-print">
+      الأعمدة المطلوبة: <b>الاسم | الوظيفة | عارضة1 | عارضة2 | ... | عارضة6 | ملاحظات</b>
+    </div>
+
+    <div class="search-box no-print">
+      <label>🔍 بحث:</label>
+      <div class="search-input-wrapper">
+        <input type="text" class="search-input" id="att-search" 
+               placeholder="اكتب الاسم أو الوظيفة للبحث..." 
+               oninput="filterTable('attBody', 'att-search', 'att-search-stats')">
+        <span class="search-icon">🔍</span>
+      </div>
+      <span class="search-stats" id="att-search-stats"></span>
+      <button class="search-clear" onclick="clearSearch('att-search', 'attBody', 'att-search-stats')">✖ مسح</button>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-add" onclick="addAttendanceRow()">➕ إضافة صف</button>
+      <button class="btn btn-download" onclick="exportToExcel('attendance')">📥 تحميل Excel</button>
+      <button class="btn btn-print" onclick="printSection('attendance')">🖨️ طباعة</button>
+      <button class="btn btn-save" onclick="saveData('attendance')">💾 حفظ</button>
+      <button class="btn btn-clear" onclick="clearTable('attBody')">🗑️ مسح الكل</button>
+    </div>
+    <div class="table-wrapper">
+      <table id="attTable">
+        <thead>
+          <tr>
+            <th style="width:35px;">م</th>
+            <th style="min-width:120px;">الاسم</th>
+            <th style="min-width:110px;">الوظيفة</th>
+            <th style="min-width:120px;">عارضة 1</th>
+            <th style="min-width:120px;">عارضة 2</th>
+            <th style="min-width:120px;">عارضة 3</th>
+            <th style="min-width:120px;">عارضة 4</th>
+            <th style="min-width:120px;">عارضة 5</th>
+            <th style="min-width:120px;">عارضة 6</th>
+            <th style="min-width:120px;">ملاحظات</th>
+            <th class="no-print" style="width:50px;">حذف</th>
+          </tr>
+        </thead>
+        <tbody id="attBody"></tbody>
+      </table>
+      <div class="no-results" id="att-no-results">🔍 لا توجد نتائج مطابقة للبحث</div>
+    </div>
+    <div class="print-footer">
+      مدرسة نيو فيجن الخاصة — كشف العوارض — تم إعداد البرنامج بواسطة المهندس عادل عبدالرحمن
+    </div>
+  </div>
+
+  <!-- ============ كشف الاعتيادي ============ -->
+  <div id="normal" class="section">
+    
+    <div class="report-header no-print">
+      <div id="norm-logo-slot"></div>
+      <div class="report-title-block">
+        <div class="report-school-name">مدرسة نيو فيجن الخاصة</div>
+        <input type="text" id="norm-title" class="report-title" value="كشف الاعتيادي">
+        <div class="report-date-line">
+          📅 التاريخ: <input type="date" id="norm-date">
+        </div>
+      </div>
+      <div style="width:110px;"></div>
+    </div>
+
+    <div class="print-only print-header">
+      <div id="norm-print-logo"></div>
+      <div class="print-header-center">
+        <div class="print-header-school">مدرسة نيو فيجن الخاصة</div>
+        <div class="print-header-divider"></div>
+        <div class="print-header-title" id="norm-print-title">كشف الاعتيادي</div>
+        <div class="print-header-date" id="norm-print-date"></div>
+      </div>
+      <div class="print-header-meta">
+        <div>📅 تاريخ الطباعة</div>
+        <div id="norm-print-now"></div>
+      </div>
+    </div>
+
+    <div class="upload-box no-print">
+      <label>📂 رفع ملف Excel:</label>
+      <input type="file" accept=".xlsx,.xls,.csv" onchange="importExcel(event, 'normal')">
+      <button class="btn btn-template" onclick="downloadTemplate('normal')">⬇️ تحميل قالب</button>
+    </div>
+    <div class="hint no-print">
+      الأعمدة المطلوبة: <b>الاسم | الوظيفة | اعتيادي1 | اعتيادي2 | ... | اعتيادي15</b>
+    </div>
+
+    <div class="search-box no-print">
+      <label>🔍 بحث:</label>
+      <div class="search-input-wrapper">
+        <input type="text" class="search-input" id="norm-search" 
+               placeholder="اكتب الاسم أو الوظيفة للبحث..." 
+               oninput="filterTable('normBody', 'norm-search', 'norm-search-stats')">
+        <span class="search-icon">🔍</span>
+      </div>
+      <span class="search-stats" id="norm-search-stats"></span>
+      <button class="search-clear" onclick="clearSearch('norm-search', 'normBody', 'norm-search-stats')">✖ مسح</button>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-add" onclick="addNormalRow()">➕ إضافة صف</button>
+      <button class="btn btn-download" onclick="exportToExcel('normal')">📥 تحميل Excel</button>
+      <button class="btn btn-print" onclick="printSection('normal')">🖨️ طباعة</button>
+      <button class="btn btn-save" onclick="saveData('normal')">💾 حفظ</button>
+      <button class="btn btn-clear" onclick="clearTable('normBody')">🗑️ مسح الكل</button>
+    </div>
+    <div class="table-wrapper">
+      <table id="normTable">
+        <thead>
+          <tr>
+            <th style="width:30px;">م</th>
+            <th style="min-width:110px;">الاسم</th>
+            <th style="min-width:100px;">الوظيفة</th>
+            <th>اعتيادي 1</th><th>اعتيادي 2</th><th>اعتيادي 3</th>
+            <th>اعتيادي 4</th><th>اعتيادي 5</th><th>اعتيادي 6</th>
+            <th>اعتيادي 7</th><th>اعتيادي 8</th><th>اعتيادي 9</th>
+            <th>اعتيادي 10</th><th>اعتيادي 11</th><th>اعتيادي 12</th>
+            <th>اعتيادي 13</th><th>اعتيادي 14</th><th>اعتيادي 15</th>
+            <th class="no-print" style="width:50px;">حذف</th>
+          </tr>
+        </thead>
+        <tbody id="normBody"></tbody>
+      </table>
+      <div class="no-results" id="norm-no-results">🔍 لا توجد نتائج مطابقة للبحث</div>
+    </div>
+    <div class="print-footer">
+      مدرسة نيو فيجن الخاصة — كشف الاعتيادي — تم إعداد البرنامج بواسطة المهندس عادل عبدالرحمن
+    </div>
+  </div>
+
+  <!-- ============ قائمة الانتظار ============ -->
+  <div id="waiting" class="section">
+    
+    <div class="report-header no-print">
+      <div id="wait-logo-slot"></div>
+      <div class="report-title-block">
+        <div class="report-school-name">مدرسة نيو فيجن الخاصة</div>
+        <input type="text" id="wait-title" class="report-title" value="قائمة الانتظار">
+        <div class="report-date-line">
+          📅 التاريخ: <input type="date" id="wait-date">
+        </div>
+      </div>
+      <div style="width:110px;"></div>
+    </div>
+
+    <div class="print-only print-header">
+      <div id="wait-print-logo"></div>
+      <div class="print-header-center">
+        <div class="print-header-school">مدرسة نيو فيجن الخاصة</div>
+        <div class="print-header-divider"></div>
+        <div class="print-header-title" id="wait-print-title">قائمة الانتظار</div>
+        <div class="print-header-date" id="wait-print-date"></div>
+      </div>
+      <div class="print-header-meta">
+        <div>📅 تاريخ الطباعة</div>
+        <div id="wait-print-now"></div>
+      </div>
+    </div>
+
+    <div class="upload-box no-print">
+      <label>📂 رفع ملف Excel:</label>
+      <input type="file" accept=".xlsx,.xls,.csv" onchange="importExcel(event, 'waiting')">
+      <button class="btn btn-template" onclick="downloadTemplate('waiting')">⬇️ تحميل قالب</button>
+    </div>
+    <div class="hint no-print">
+      الأعمدة المطلوبة: <b>الاسم | الوظيفة | التقييم | ملاحظات</b>
+    </div>
+
+    <div class="search-box no-print">
+      <label>🔍 بحث:</label>
+      <div class="search-input-wrapper">
+        <input type="text" class="search-input" id="wait-search" 
+               placeholder="اكتب الاسم أو الوظيفة للبحث..." 
+               oninput="filterTable('waitBody', 'wait-search', 'wait-search-stats')">
+        <span class="search-icon">🔍</span>
+      </div>
+      <span class="search-stats" id="wait-search-stats"></span>
+      <button class="search-clear" onclick="clearSearch('wait-search', 'waitBody', 'wait-search-stats')">✖ مسح</button>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-add" onclick="addWaitingRow()">➕ إضافة صف</button>
+      <button class="btn btn-download" onclick="exportToExcel('waiting')">📥 تحميل Excel</button>
+      <button class="btn btn-print" onclick="printSection('waiting')">🖨️ طباعة</button>
+      <button class="btn btn-save" onclick="saveData('waiting')">💾 حفظ</button>
+      <button class="btn btn-clear" onclick="clearTable('waitBody')">🗑️ مسح الكل</button>
+    </div>
+    <div class="table-wrapper">
+      <table id="waitTable">
+        <thead>
+          <tr>
+            <th style="width:40px;">م</th>
+            <th>الاسم</th>
+            <th>الوظيفة</th>
+            <th>التقييم</th>
+            <th>ملاحظات</th>
+            <th class="no-print" style="width:50px;">حذف</th>
+          </tr>
+        </thead>
+        <tbody id="waitBody"></tbody>
+      </table>
+      <div class="no-results" id="wait-no-results">🔍 لا توجد نتائج مطابقة للبحث</div>
+    </div>
+    <div class="print-footer">
+      مدرسة نيو فيجن الخاصة — قائمة الانتظار — تم إعداد البرنامج بواسطة المهندس عادل عبدالرحمن
+    </div>
+  </div>
+
+  <!-- ============ غياب اليوم ============ -->
+  <div id="absence" class="section">
+    
+    <div class="report-header no-print">
+      <div id="abs-logo-slot"></div>
+      <div class="report-title-block">
+        <div class="report-school-name">مدرسة نيو فيجن الخاصة</div>
+        <input type="text" id="abs-title" class="report-title" value="غياب اليوم">
+        <div class="report-date-line">
+          📅 التاريخ: <input type="date" id="abs-date">
+        </div>
+      </div>
+      <div style="width:110px;"></div>
+    </div>
+
+    <div class="print-only print-header">
+      <div id="abs-print-logo"></div>
+      <div class="print-header-center">
+        <div class="print-header-school">مدرسة نيو فيجن الخاصة</div>
+        <div class="print-header-divider"></div>
+        <div class="print-header-title" id="abs-print-title">غياب اليوم</div>
+        <div class="print-header-date" id="abs-print-date"></div>
+      </div>
+      <div class="print-header-meta">
+        <div>📅 تاريخ الطباعة</div>
+        <div id="abs-print-now"></div>
+      </div>
+    </div>
+
+    <div class="upload-box no-print">
+      <label>📂 رفع ملف Excel:</label>
+      <input type="file" accept=".xlsx,.xls,.csv" onchange="importExcel(event, 'absence')">
+      <button class="btn btn-template" onclick="downloadTemplate('absence')">⬇️ تحميل قالب</button>
+    </div>
+    <div class="hint no-print">
+      الأعمدة المطلوبة: <b>الاسم | الوظيفة</b>
+    </div>
+
+    <div class="search-box no-print">
+      <label>🔍 بحث:</label>
+      <div class="search-input-wrapper">
+        <input type="text" class="search-input" id="abs-search" 
+               placeholder="اكتب الاسم أو الوظيفة للبحث..." 
+               oninput="filterTable('absBody', 'abs-search', 'abs-search-stats')">
+        <span class="search-icon">🔍</span>
+      </div>
+      <span class="search-stats" id="abs-search-stats"></span>
+      <button class="search-clear" onclick="clearSearch('abs-search', 'absBody', 'abs-search-stats')">✖ مسح</button>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-add" onclick="addAbsenceRow()">➕ إضافة صف</button>
+      <button class="btn btn-download" onclick="exportToExcel('absence')">📥 تحميل Excel</button>
+      <button class="btn btn-print" onclick="printSection('absence')">🖨️ طباعة</button>
+      <button class="btn btn-save" onclick="saveData('absence')">💾 حفظ</button>
+      <button class="btn btn-clear" onclick="clearTable('absBody')">🗑️ مسح الكل</button>
+    </div>
+    <div class="table-wrapper">
+      <table id="absTable">
+        <thead>
+          <tr>
+            <th style="width:50px;">م</th>
+            <th style="min-width:250px;">الاسم</th>
+            <th style="min-width:200px;">الوظيفة</th>
+            <th class="no-print" style="width:60px;">حذف</th>
+          </tr>
+        </thead>
+        <tbody id="absBody"></tbody>
+      </table>
+      <div class="no-results" id="abs-no-results">🔍 لا توجد نتائج مطابقة للبحث</div>
+    </div>
+    <div class="print-footer">
+      مدرسة نيو فيجن الخاصة — غياب اليوم — تم إعداد البرنامج بواسطة المهندس عادل عبدالرحمن
+    </div>
+  </div>
+</div>
+
+<!-- نافذة إدارة الوظائف -->
+<div class="modal-overlay" id="jobsModal">
+  <div class="modal">
+    <h2>🏫 قائمة الوظائف</h2>
+    <p>عدّل / أضف / احذف الوظائف، وستظهر تلقائيًا في كل الكشوف</p>
+    <div id="jobsList"></div>
+    <div class="modal-footer">
+      <button class="btn btn-add" onclick="addJobField()">➕ إضافة وظيفة</button>
+      <button class="btn btn-save" onclick="saveJobs()">💾 حفظ</button>
+      <button class="btn btn-clear" onclick="closeJobsModal()">✖ إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ================== دالة البحث والتصفية ==================
+  function filterTable(tbodyId, searchInputId, statsId) {
+    const query = document.getElementById(searchInputId).value.trim().toLowerCase();
+    const tbody = document.getElementById(tbodyId);
+    const rows = tbody.querySelectorAll('tr');
+    let visibleCount = 0;
+    let totalCount = 0;
+
+    rows.forEach(row => {
+      const nameInput = row.querySelector('input[type="text"]');
+      const jobSelect = row.querySelector('select.job-select');
+      
+      if (!nameInput && !jobSelect) return;
+      
+      totalCount++;
+      const name = nameInput ? nameInput.value.trim().toLowerCase() : '';
+      const job = jobSelect ? jobSelect.value.trim().toLowerCase() : '';
+      
+      if (query === '' || name.includes(query) || job.includes(query)) {
+        row.classList.remove('hidden-by-search');
+        visibleCount++;
+      } else {
+        row.classList.add('hidden-by-search');
+      }
+    });
+
+    const noResultsEl = document.getElementById(tbodyId.replace('Body', '-no-results'));
+    if (noResultsEl) {
+      if (query !== '' && visibleCount === 0) {
+        noResultsEl.classList.add('show');
+      } else {
+        noResultsEl.classList.remove('show');
+      }
+    }
+
+    const statsEl = document.getElementById(statsId);
+    if (statsEl) {
+      if (query === '') {
+        statsEl.textContent = `الكل: ${totalCount}`;
+      } else {
+        statsEl.textContent = `${visibleCount} من ${totalCount}`;
+      }
+    }
+  }
+
+  function clearSearch(searchInputId, tbodyId, statsId) {
+    document.getElementById(searchInputId).value = '';
+    filterTable(tbodyId, searchInputId, statsId);
+    document.getElementById(searchInputId).focus();
+  }
+
+  // ================== شعار المدرسة ==================
+  let logoData = localStorage.getItem('shoun_logo') || '';
+
+  function renderLogo() {
+    ['att-logo-slot', 'norm-logo-slot', 'wait-logo-slot', 'abs-logo-slot'].forEach(id => {
+      const slot = document.getElementById(id);
+      if (!slot) return;
+      if (logoData) {
+        slot.innerHTML = `<img src="${logoData}" class="report-logo" alt="شعار المدرسة">`;
+      } else {
+        slot.innerHTML = `<div class="report-logo-empty">لا يوجد<br>شعار</div>`;
+      }
+    });
+    ['att-print-logo', 'norm-print-logo', 'wait-print-logo', 'abs-print-logo'].forEach(id => {
+      const slot = document.getElementById(id);
+      if (!slot) return;
+      if (logoData) {
+        slot.innerHTML = `<img src="${logoData}" class="print-header-logo" alt="شعار المدرسة">`;
+      } else {
+        slot.innerHTML = `<div class="print-header-logo-empty">لا يوجد<br>شعار</div>`;
+      }
+    });
+  }
+
+  function uploadLogo(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('⚠️ يجب اختيار ملف صورة');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      logoData = e.target.result;
+      localStorage.setItem('shoun_logo', logoData);
+      renderLogo();
+      alert('✅ تم رفع شعار المدرسة بنجاح');
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  }
+
+  // ================== قائمة الوظائف ==================
+  const DEFAULT_JOBS = [
+    'مدير المدرسة', 'وكيل المدرسة', 'معلم أول', 'معلم', 'معلم مساعد',
+    'أخصائي اجتماعي', 'أخصائي نفسي', 'أمين مكتبة', 'محاسب', 'إداري',
+    'عامل', 'حارس أمن'
+  ];
+
+  let jobsList = JSON.parse(localStorage.getItem('shoun_jobs') || 'null') || [...DEFAULT_JOBS];
+
+  function refreshJobSelects() {
+    document.querySelectorAll('select.job-select').forEach(sel => {
+      const currentVal = sel.value;
+      sel.innerHTML = '<option value="">-- اختر الوظيفة --</option>' +
+        jobsList.map(j => `<option value="${j}">${j}</option>`).join('');
+      if (currentVal && jobsList.includes(currentVal)) sel.value = currentVal;
+      if (currentVal && !jobsList.includes(currentVal)) {
+        const opt = document.createElement('option');
+        opt.value = currentVal;
+        opt.textContent = currentVal;
+        sel.appendChild(opt);
+        sel.value = currentVal;
+      }
+    });
+  }
+
+  function openJobsModal() {
+    const container = document.getElementById('jobsList');
+    container.innerHTML = '';
+    jobsList.forEach(j => addJobField(j));
+    document.getElementById('jobsModal').classList.add('show');
+  }
+
+  function closeJobsModal() {
+    document.getElementById('jobsModal').classList.remove('show');
+  }
+
+  function addJobField(value = '') {
+    const container = document.getElementById('jobsList');
+    const div = document.createElement('div');
+    div.className = 'job-item';
+    div.innerHTML = `
+      <input type="text" value="${value}" placeholder="اسم الوظيفة">
+      <button class="btn btn-del" onclick="this.parentNode.remove()">✖</button>
+    `;
+    container.appendChild(div);
+  }
+
+  function saveJobs() {
+    const inputs = document.querySelectorAll('#jobsList .job-item input');
+    const newJobs = [];
+    inputs.forEach(inp => {
+      const v = inp.value.trim();
+      if (v && !newJobs.includes(v)) newJobs.push(v);
+    });
+    if (newJobs.length === 0) {
+      alert('⚠️ يجب إضافة وظيفة واحدة على الأقل');
+      return;
+    }
+    jobsList = newJobs;
+    localStorage.setItem('shoun_jobs', JSON.stringify(jobsList));
+    refreshJobSelects();
+    filterTable('attBody', 'att-search', 'att-search-stats');
+    filterTable('normBody', 'norm-search', 'norm-search-stats');
+    filterTable('waitBody', 'wait-search', 'wait-search-stats');
+    filterTable('absBody', 'abs-search', 'abs-search-stats');
+    closeJobsModal();
+    alert('✅ تم حفظ قائمة الوظائف');
+  }
+
+  // ================== التبويبات ==================
+  function showTab(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ================== تحديث بيانات رأس الطباعة ==================
+  function updatePrintHeader(type) {
+    const now = new Date();
+    const d = String(now.getDate()).padStart(2, '0');
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const y = now.getFullYear();
+    const nowStr = `${d}/${m}/${y}`;
+
+    const mapping = {
+      attendance: ['att-print-title', 'att-title', 'att-print-date', 'att-date', 'att-print-now', 'كشف العوارض'],
+      normal: ['norm-print-title', 'norm-title', 'norm-print-date', 'norm-date', 'norm-print-now', 'كشف الاعتيادي'],
+      waiting: ['wait-print-title', 'wait-title', 'wait-print-date', 'wait-date', 'wait-print-now', 'قائمة الانتظار'],
+      absence: ['abs-print-title', 'abs-title', 'abs-print-date', 'abs-date', 'abs-print-now', 'غياب اليوم']
+    };
+
+    const mp = mapping[type];
+    if (!mp) return;
+    document.getElementById(mp[0]).textContent = document.getElementById(mp[1]).value || mp[5];
+    const dateVal = document.getElementById(mp[3]).value;
+    document.getElementById(mp[2]).textContent = dateVal ? `تاريخ الكشف: ${formatDateForDisplay(dateVal)}` : '';
+    document.getElementById(mp[4]).textContent = nowStr;
+  }
+
+  function formatDateForDisplay(dateVal) {
+    if (!dateVal) return '';
+    const parts = dateVal.split('-');
+    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    return dateVal;
+  }
+
+  // ================== كشف العوارض ==================
+  function addAttendanceRow(data = {}) {
+    const tbody = document.getElementById('attBody');
+    const row = document.createElement('tr');
+    const idx = tbody.rows.length + 1;
+    
+    let cells = `
+      <td>${idx}</td>
+      <td><input type="text" value="${data.name || ''}"></td>
+      <td>
+        <select class="job-select">
+          <option value="">-- اختر الوظيفة --</option>
+          ${jobsList.map(j => `<option value="${j}" ${data.job === j ? 'selected' : ''}>${j}</option>`).join('')}
+        </select>
+      </td>
+    `;
+    
+    for (let i = 1; i <= 6; i++) {
+      cells += `<td><input type="date" value="${data['date'+i] || ''}"></td>`;
+    }
+    
+    cells += `
+      <td><input type="text" value="${data.notes || ''}"></td>
+      <td class="no-print"><button class="btn btn-del" onclick="removeRow(this)">✖</button></td>
+    `;
+    
+    row.innerHTML = cells;
+    tbody.appendChild(row);
+    updateNumbers('attBody');
+    const q = document.getElementById('att-search').value;
+    if (q) filterTable('attBody', 'att-search', 'att-search-stats');
+  }
+
+  // ================== كشف الاعتيادي ==================
+  function addNormalRow(data = {}) {
+    const tbody = document.getElementById('normBody');
+    const row = document.createElement('tr');
+    const idx = tbody.rows.length + 1;
+    
+    let cells = `
+      <td>${idx}</td>
+      <td><input type="text" value="${data.name || ''}"></td>
+      <td>
+        <select class="job-select">
+          <option value="">-- اختر الوظيفة --</option>
+          ${jobsList.map(j => `<option value="${j}" ${data.job === j ? 'selected' : ''}>${j}</option>`).join('')}
+        </select>
+      </td>
+    `;
+    
+    for (let i = 1; i <= 15; i++) {
+      cells += `<td><input type="date" value="${data['date'+i] || ''}"></td>`;
+    }
+    
+    cells += `<td class="no-print"><button class="btn btn-del" onclick="removeRow(this)">✖</button></td>`;
+    
+    row.innerHTML = cells;
+    tbody.appendChild(row);
+    updateNumbers('normBody');
+    const q = document.getElementById('norm-search').value;
+    if (q) filterTable('normBody', 'norm-search', 'norm-search-stats');
+  }
+
+  // ================== قائمة الانتظار ==================
+  function addWaitingRow(data = {}) {
+    const tbody = document.getElementById('waitBody');
+    const row = document.createElement('tr');
+    const idx = tbody.rows.length + 1;
+    const ratings = ['ممتاز', 'جيد جداً', 'جيد', 'مقبول', 'لا يوجد تقييم'];
+    const options = ratings.map(r => `<option value="${r}" ${data.rating === r ? 'selected' : ''}>${r}</option>`).join('');
+    row.innerHTML = `
+      <td>${idx}</td>
+      <td><input type="text" value="${data.name || ''}"></td>
+      <td>
+        <select class="job-select">
+          <option value="">-- اختر الوظيفة --</option>
+          ${jobsList.map(j => `<option value="${j}" ${data.job === j ? 'selected' : ''}>${j}</option>`).join('')}
+        </select>
+      </td>
+      <td><select>${options}</select></td>
+      <td><input type="text" value="${data.notes || ''}"></td>
+      <td class="no-print"><button class="btn btn-del" onclick="removeRow(this)">✖</button></td>
+    `;
+    tbody.appendChild(row);
+    updateNumbers('waitBody');
+    const q = document.getElementById('wait-search').value;
+    if (q) filterTable('waitBody', 'wait-search', 'wait-search-stats');
+  }
+
+  // ================== غياب اليوم ==================
+  function addAbsenceRow(data = {}) {
+    const tbody = document.getElementById('absBody');
+    const row = document.createElement('tr');
+    const idx = tbody.rows.length + 1;
+    row.innerHTML = `
+      <td>${idx}</td>
+      <td><input type="text" value="${data.name || ''}"></td>
+      <td>
+        <select class="job-select">
+          <option value="">-- اختر الوظيفة --</option>
+          ${jobsList.map(j => `<option value="${j}" ${data.job === j ? 'selected' : ''}>${j}</option>`).join('')}
+        </select>
+      </td>
+      <td class="no-print"><button class="btn btn-del" onclick="removeRow(this)">✖</button></td>
+    `;
+    tbody.appendChild(row);
+    updateNumbers('absBody');
+    const q = document.getElementById('abs-search').value;
+    if (q) filterTable('absBody', 'abs-search', 'abs-search-stats');
+  }
+
+  function removeRow(btn) {
+    const tr = btn.closest('tr');
+    const tbody = tr.parentNode;
+    tr.remove();
+    updateNumbers(tbody.id);
+    if (tbody.id === 'attBody') filterTable('attBody', 'att-search', 'att-search-stats');
+    else if (tbody.id === 'normBody') filterTable('normBody', 'norm-search', 'norm-search-stats');
+    else if (tbody.id === 'waitBody') filterTable('waitBody', 'wait-search', 'wait-search-stats');
+    else if (tbody.id === 'absBody') filterTable('absBody', 'abs-search', 'abs-search-stats');
+  }
+
+  function updateNumbers(tbodyId) {
+    const rows = document.getElementById(tbodyId).rows;
+    for (let i = 0; i < rows.length; i++) {
+      rows[i].cells[0].textContent = i + 1;
+    }
+  }
+
+  function clearTable(tbodyId) {
+    if (confirm('هل أنت متأكد من مسح جميع الصفوف؟')) {
+      document.getElementById(tbodyId).innerHTML = '';
+      if (tbodyId === 'attBody') filterTable('attBody', 'att-search', 'att-search-stats');
+      else if (tbodyId === 'normBody') filterTable('normBody', 'norm-search', 'norm-search-stats');
+      else if (tbodyId === 'waitBody') filterTable('waitBody', 'wait-search', 'wait-search-stats');
+      else if (tbodyId === 'absBody') filterTable('absBody', 'abs-search', 'abs-search-stats');
+    }
+  }
+
+  // ================== الطباعة ==================
+  function printSection(type) {
+    updatePrintHeader(type);
+    setTimeout(() => {
+      window.print();
+    }, 100);
+  }
+
+  // ================== تصدير البيانات إلى Excel ==================
+  function exportToExcel(type) {
+    let headers = [];
+    let rows = [];
+    let fileName = '';
+    let sheetTitle = '';
+
+    if (type === 'attendance') {
+      headers = ['م', 'الاسم', 'الوظيفة'];
+      for (let i = 1; i <= 6; i++) headers.push('عارضة ' + i);
+      headers.push('ملاحظات');
+      
+      document.querySelectorAll('#attBody tr').forEach((tr, idx) => {
+        const inputs = tr.querySelectorAll('input');
+        const jobSel = tr.querySelector('select.job-select');
+        const row = [idx + 1, inputs[0].value, jobSel.value];
+        for (let i = 1; i <= 6; i++) row.push(inputs[i].value || '');
+        row.push(inputs[7].value || '');
+        rows.push(row);
+      });
+      
+      fileName = 'كشف_العوارض_' + getDateString() + '.xlsx';
+      sheetTitle = 'كشف العوارض';
+      
+    } else if (type === 'normal') {
+      headers = ['م', 'الاسم', 'الوظيفة'];
+      for (let i = 1; i <= 15; i++) headers.push('اعتيادي ' + i);
+      
+      document.querySelectorAll('#normBody tr').forEach((tr, idx) => {
+        const inputs = tr.querySelectorAll('input');
+        const jobSel = tr.querySelector('select.job-select');
+        const row = [idx + 1, inputs[0].value, jobSel.value];
+        for (let i = 1; i <= 15; i++) row.push(inputs[i].value || '');
+        rows.push(row);
+      });
+      
+      fileName = 'كشف_الاعتيادي_' + getDateString() + '.xlsx';
+      sheetTitle = 'كشف الاعتيادي';
+      
+    } else if (type === 'waiting') {
+      headers = ['م', 'الاسم', 'الوظيفة', 'التقييم', 'ملاحظات'];
+      
+      document.querySelectorAll('#waitBody tr').forEach((tr, idx) => {
+        const inputs = tr.querySelectorAll('input');
+        const jobSel = tr.querySelector('select.job-select');
+        const ratingSel = tr.querySelectorAll('select')[1];
+        rows.push([idx + 1, inputs[0].value, jobSel.value, ratingSel.value, inputs[1].value]);
+      });
+      
+      fileName = 'قائمة_الانتظار_' + getDateString() + '.xlsx';
+      sheetTitle = 'قائمة الانتظار';
+      
+    } else if (type === 'absence') {
+      headers = ['م', 'الاسم', 'الوظيفة'];
+      
+      document.querySelectorAll('#absBody tr').forEach((tr, idx) => {
+        const inputs = tr.querySelectorAll('input');
+        const jobSel = tr.querySelector('select.job-select');
+        rows.push([idx + 1, inputs[0].value, jobSel.value]);
+      });
+      
+      fileName = 'غياب_اليوم_' + getDateString() + '.xlsx';
+      sheetTitle = 'غياب اليوم';
+    }
+
+    if (rows.length === 0) {
+      alert('⚠️ لا توجد بيانات لتحميلها');
+      return;
+    }
+
+    const dateStr = getDisplayDate(type);
+    const now = new Date();
+    const d = String(now.getDate()).padStart(2, '0');
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const y = now.getFullYear();
+    const printDateStr = `${d}/${m}/${y}`;
+
+    const wsData = [
+      ['مدرسة نيو فيجن الخاصة'],
+      [sheetTitle + (dateStr ? '   -   تاريخ الكشف: ' + dateStr : '')],
+      ['تاريخ الطباعة: ' + printDateStr],
+      ['تم إعداد البرنامج بواسطة المهندس عادل عبدالرحمن'],
+      [],
+      headers,
+      ...rows
+    ];
+
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    
+    ws['!merges'] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } },
+      { s: { r: 1, c: 0 }, e: { r: 1, c: headers.length - 1 } },
+      { s: { r: 2, c: 0 }, e: { r: 2, c: headers.length - 1 } },
+      { s: { r: 3, c: 0 }, e: { r: 3, c: headers.length - 1 } }
+    ];
+
+    ws['!cols'] = headers.map((h, i) => {
+      if (i === 0) return { wch: 5 };
+      if (i === 1) return { wch: 25 };
+      if (i === 2) return { wch: 20 };
+      return { wch: 14 };
+    });
+
+    ws['!rows'] = [{ hpt: 28 }, { hpt: 22 }, { hpt: 18 }, { hpt: 18 }];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetTitle.substring(0, 30));
+    XLSX.writeFile(wb, fileName);
+  }
+
+  function getDateString() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function getDisplayDate(type) {
+    let dateVal = '';
+    if (type === 'attendance') dateVal = document.getElementById('att-date').value;
+    else if (type === 'normal') dateVal = document.getElementById('norm-date').value;
+    else if (type === 'waiting') dateVal = document.getElementById('wait-date').value;
+    else if (type === 'absence') dateVal = document.getElementById('abs-date').value;
+
+    if (!dateVal) return '';
+    const parts = dateVal.split('-');
+    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    return dateVal;
+  }
+
+  // ================== رفع ملف Excel ==================
+  function importExcel(event, type) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+        
+        if (rows.length < 2) {
+          alert('⚠️ الملف فارغ أو لا يحتوي على بيانات');
+          event.target.value = '';
+          return;
+        }
+
+        const dataRows = rows.slice(1).filter(r => r.some(c => String(c).trim() !== ''));
+
+        if (dataRows.length === 0) {
+          alert('⚠️ لا توجد بيانات في الملف');
+          event.target.value = '';
+          return;
+        }
+
+        if (!confirm(`تم العثور على ${dataRows.length} صف. هل تريد استبدال البيانات الحالية؟`)) {
+          event.target.value = '';
+          return;
+        }
+
+        if (type === 'attendance') {
+          document.getElementById('attBody').innerHTML = '';
+          dataRows.forEach(r => {
+            const row = { name: r[0] || '', job: r[1] || '' };
+            for (let i = 0; i < 6; i++) row['date'+(i+1)] = formatExcelDate(r[2+i]);
+            row.notes = r[8] || '';
+            addAttendanceRow(row);
+          });
+        } else if (type === 'normal') {
+          document.getElementById('normBody').innerHTML = '';
+          dataRows.forEach(r => {
+            const row = { name: r[0] || '', job: r[1] || '' };
+            for (let i = 0; i < 15; i++) row['date'+(i+1)] = formatExcelDate(r[2+i]);
+            addNormalRow(row);
+          });
+        } else if (type === 'waiting') {
+          document.getElementById('waitBody').innerHTML = '';
+          const ratings = ['ممتاز', 'جيد جداً', 'جيد', 'مقبول', 'لا يوجد تقييم'];
+          dataRows.forEach(r => {
+            let rating = String(r[2] || '').trim();
+            if (rating === 'جيد جدا') rating = 'جيد جداً';
+            if (!ratings.includes(rating)) rating = 'لا يوجد تقييم';
+            addWaitingRow({ name: r[0] || '', job: r[1] || '', rating: rating, notes: r[3] || '' });
+          });
+        } else if (type === 'absence') {
+          document.getElementById('absBody').innerHTML = '';
+          dataRows.forEach(r => {
+            addAbsenceRow({ name: r[0] || '', job: r[1] || '' });
+          });
+        }
+
+        alert(`✅ تم استيراد ${dataRows.length} صف بنجاح`);
+        event.target.value = '';
+      } catch (err) {
+        console.error(err);
+        alert('❌ حدث خطأ في قراءة الملف: ' + err.message);
+        event.target.value = '';
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function formatExcelDate(val) {
+    if (!val && val !== 0) return '';
+    if (typeof val === 'number') {
+      const date = XLSX.SSF.parse_date_code(val);
+      if (date) {
+        const y = date.y;
+        const m = String(date.m).padStart(2, '0');
+        const d = String(date.d).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+    }
+    const str = String(val).trim();
+    if (!str) return '';
+    const match = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if (match) {
+      let d = match[1].padStart(2, '0');
+      let m = match[2].padStart(2, '0');
+      let y = match[3];
+      if (y.length === 2) y = '20' + y;
+      return `${y}-${m}-${d}`;
+    }
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.slice(0, 10);
+    return '';
+  }
+
+  // ================== تحميل قالب Excel ==================
+  function downloadTemplate(type) {
+    let headers = [];
+    let sampleRow = [];
+    let fileName = '';
+
+    if (type === 'attendance') {
+      headers = ['الاسم', 'الوظيفة'];
+      for (let i = 1; i <= 6; i++) headers.push('عارضة' + i);
+      headers.push('ملاحظات');
+      sampleRow = ['محمد أحمد', jobsList[2] || 'معلم أول'];
+      for (let i = 0; i < 6; i++) sampleRow.push('');
+      sampleRow.push('');
+      fileName = 'قالب_كشف_العوارض.xlsx';
+    } else if (type === 'normal') {
+      headers = ['الاسم', 'الوظيفة'];
+      for (let i = 1; i <= 15; i++) headers.push('اعتيادي' + i);
+      sampleRow = ['محمد أحمد', jobsList[2] || 'معلم أول'];
+      for (let i = 0; i < 15; i++) sampleRow.push('');
+      fileName = 'قالب_كشف_الاعتيادي.xlsx';
+    } else if (type === 'waiting') {
+      headers = ['الاسم', 'الوظيفة', 'التقييم', 'ملاحظات'];
+      sampleRow = ['محمد أحمد', jobsList[2] || 'معلم أول', 'ممتاز', ''];
+      fileName = 'قالب_قائمة_الانتظار.xlsx';
+    } else if (type === 'absence') {
+      headers = ['الاسم', 'الوظيفة'];
+      sampleRow = ['محمد أحمد', jobsList[2] || 'معلم أول'];
+      fileName = 'قالب_غياب_اليوم.xlsx';
+    }
+
+    const wsData = [headers, sampleRow];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 4, 15) }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'البيانات');
+    XLSX.writeFile(wb, fileName);
+  }
+
+  // ================== الحفظ ==================
+  function saveData(type) {
+    const data = { rows: [], title: '', date: '' };
+    
+    if (type === 'attendance') {
+      data.title = document.getElementById('att-title').value;
+      data.date = document.getElementById('att-date').value;
+      document.querySelectorAll('#attBody tr').forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        const jobSel = tr.querySelector('select.job-select');
+        const row = { name: inputs[0].value, job: jobSel.value };
+        for (let i = 1; i <= 6; i++) row['date' + i] = inputs[i].value;
+        row.notes = inputs[7].value;
+        data.rows.push(row);
+      });
+    } else if (type === 'normal') {
+      data.title = document.getElementById('norm-title').value;
+      data.date = document.getElementById('norm-date').value;
+      document.querySelectorAll('#normBody tr').forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        const jobSel = tr.querySelector('select.job-select');
+        const row = { name: inputs[0].value, job: jobSel.value };
+        for (let i = 1; i <= 15; i++) row['date' + i] = inputs[i].value;
+        data.rows.push(row);
+      });
+    } else if (type === 'waiting') {
+      data.title = document.getElementById('wait-title').value;
+      data.date = document.getElementById('wait-date').value;
+      document.querySelectorAll('#waitBody tr').forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        const jobSel = tr.querySelector('select.job-select');
+        const ratingSel = tr.querySelectorAll('select')[1];
+        data.rows.push({
+          name: inputs[0].value, job: jobSel.value,
+          rating: ratingSel.value, notes: inputs[1].value
+        });
+      });
+    } else if (type === 'absence') {
+      data.title = document.getElementById('abs-title').value;
+      data.date = document.getElementById('abs-date').value;
+      document.querySelectorAll('#absBody tr').forEach(tr => {
+        const inputs = tr.querySelectorAll('input');
+        const jobSel = tr.querySelector('select.job-select');
+        data.rows.push({
+          name: inputs[0].value,
+          job: jobSel.value
+        });
+      });
+    }
+    localStorage.setItem('shoun_' + type, JSON.stringify(data));
+    alert('✅ تم الحفظ بنجاح');
+  }
+
+  function loadData() {
+    const today = new Date().toISOString().split('T')[0];
+
+    const att = JSON.parse(localStorage.getItem('shoun_attendance') || 'null');
+    if (att) {
+      document.getElementById('att-title').value = att.title || 'كشف العوارض';
+      document.getElementById('att-date').value = att.date || today;
+      att.rows.forEach(r => addAttendanceRow(r));
+    } else {
+      document.getElementById('att-date').value = today;
+    }
+
+    const norm = JSON.parse(localStorage.getItem('shoun_normal') || 'null');
+    if (norm) {
+      document.getElementById('norm-title').value = norm.title || 'كشف الاعتيادي';
+      document.getElementById('norm-date').value = norm.date || today;
+      norm.rows.forEach(r => addNormalRow(r));
+    } else {
+      document.getElementById('norm-date').value = today;
+    }
+
+    const wait = JSON.parse(localStorage.getItem('shoun_waiting') || 'null');
+    if (wait) {
+      document.getElementById('wait-title').value = wait.title || 'قائمة الانتظار';
+      document.getElementById('wait-date').value = wait.date || today;
+      wait.rows.forEach(r => addWaitingRow(r));
+    } else {
+      document.getElementById('wait-date').value = today;
+    }
+
+    const abs = JSON.parse(localStorage.getItem('shoun_absence') || 'null');
+    if (abs) {
+      document.getElementById('abs-title').value = abs.title || 'غياب اليوم';
+      document.getElementById('abs-date').value = abs.date || today;
+      abs.rows.forEach(r => addAbsenceRow(r));
+    } else {
+      document.getElementById('abs-date').value = today;
+    }
+
+    filterTable('attBody', 'att-search', 'att-search-stats');
+    filterTable('normBody', 'norm-search', 'norm-search-stats');
+    filterTable('waitBody', 'wait-search', 'wait-search-stats');
+    filterTable('absBody', 'abs-search', 'abs-search-stats');
+  }
+
+  document.getElementById('jobsModal').addEventListener('click', function(e) {
+    if (e.target === this) closeJobsModal();
+  });
+
+  window.onload = function() {
+    renderLogo();
+    loadData();
+    if (document.getElementById('attBody').rows.length === 0) {
+      addAttendanceRow(); addAttendanceRow();
+    }
+    if (document.getElementById('normBody').rows.length === 0) {
+      addNormalRow(); addNormalRow();
+    }
+    if (document.getElementById('waitBody').rows.length === 0) {
+      addWaitingRow(); addWaitingRow();
+    }
+    if (document.getElementById('absBody').rows.length === 0) {
+      addAbsenceRow(); addAbsenceRow();
+    }
+  };
+</script>
+</body>
+</html>
